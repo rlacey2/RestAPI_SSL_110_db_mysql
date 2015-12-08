@@ -1,0 +1,267 @@
+id,createdAt,updatedAt,active,active_start,active_finish,json_meta
+1,"2015-11-28 13:30:43","2015-11-28 13:30:43",-1,"2015-11-28 13:30:43","2015-11-28 13:30:43","{  
+         ""id"":1,
+         ""cId"":""jmb001"",
+         ""name"":""Year Head Seminars - Module 2 - 2 cols"",
+         ""model_type"":""Seminar"",
+         ""template_meta"":{  
+            ""copiedFrom"":"""",
+            ""type"":""template1_seminar"",
+            ""description"":""Seminar: 1:N,i.e. One offering, 1+ attendees, used when offering is full session/day and no second or more offerings for the attendee""
+         },
+         ""active"":true,
+         ""active_start"":""01/09/2015"",
+         ""active_finish"":""21/09/2015"",
+         ""instructions"":[  
+            {  
+               ""text"":""Select your event from the list above. ""
+            },
+            {  
+               ""text"":""Have your details available.""
+            },
+            {  
+               ""text"":""You will need details on the school.""
+            },
+            {  
+               ""text"":""On the form use 'Attendee Data Entry' on the left to identify the choice of event, the surname and forename of the attendee.""
+            },
+            {  
+               ""text"":""You have to complete all fields that are provided. ""
+            },
+            {  
+               ""text"":""Click add attendee and that person will be added to the list on the right. You may then add another attendee.""
+            },
+            {  
+               ""text"":""School details etc""
+            },
+            {  
+               ""text"":""Printing this form from the browser will not present nicely for the moment. ""
+            },
+            {  
+               ""text"":""etc""
+            }
+         ],
+         ""contact"":{  
+            ""meta"":{  
+               ""enabled"":true
+            },
+            ""data"":{  
+               ""surname"":"""",
+               ""forename"":"""",
+               ""position"":"""",
+               ""email"":"""",
+               ""email2"":"""",
+               ""phone"":""""   
+            }
+         },
+         ""organisation"":{  
+            ""meta"":{  
+               ""enabled"":true,
+               ""template"":""organisation_minimum"",
+               ""ui_text_attendee"":""Delegate"",
+               ""ui_text_to_display"":""School"",
+               ""requireContactDetails"":true,
+               ""allowChooser"":true,
+               ""allowCountyFilter"":true,
+               ""addressfilterfield"":""County"",
+               ""sectorNo_text"":""School Roll No:"",
+               ""visible_also"":[  
+                  ""visible_address1"",
+                  ""address2"",
+                  ""address3"",
+                  ""postcode"",
+                  ""county_region"",
+                  ""sectorNo"",
+                  ""contact_name"",
+                  ""telephone"",
+                  ""fax""
+               ]
+            },
+            ""data"":{  
+               ""orgId"":"""",
+               ""name"":"""",
+               ""email"":"""",
+               ""email2"":"""",
+               ""address"":"""",
+               ""County"":""""
+            }
+         },
+         ""attendees_meta"":{   ""maxNo"" : 10,
+            ""max_per_entry"":-1,
+            ""request_lunch"":true,
+            ""request_position"":true,
+            ""positions"":[  
+               {  
+                  ""id"":1,
+                  ""name"":""Alpha""
+               },
+               {  
+                  ""id"":2,
+                  ""name"":""Beta""
+               },
+               {  
+                  ""id"":3,
+                  ""name"":""Gamma""
+               },
+               {  
+                  ""id"":4,
+                  ""name"":""Delta""
+               }
+            ]
+         },
+         ""notes"":""_"",
+         ""overview"":{  
+            ""meta"":{  
+               ""visible"":true
+            },
+            ""data"":[  
+               {  
+                  ""visible"":true,
+                  ""text"":""Year Head Seminar - Module 2 2 cols"",
+                  ""css"":""event_h_1""
+               },
+               {  
+                  ""visible"":true,
+                  ""text"":""Open to all teachers working 2015/16"",
+                  ""css"":""event_h_2""
+               },
+               {  
+                  ""visible"":true,
+                  ""text"":""Please see below for list of venues"",
+                  ""css"":""event_h_3""
+               },
+               {  
+                  ""visible"":true,
+                  ""text"":""Each seminar runs..."",
+                  ""css"":""event_h_4""
+               },
+               {  
+                  ""visible"":true,
+                  ""text"":""another overview line"",
+                  ""css"":""event_h_4""
+               }
+            ]
+         },
+         ""offerings"":{  
+            ""meta"":{  
+               ""visible"":true,
+               ""css"":""offerings_container_1"",
+               ""columns"":2
+            },
+            ""data"":[  
+               {  
+                  ""order"":1,
+                  ""visible"":false,
+                  ""line1"":{  
+                     ""text"":"" Crowne Plaza Hotel, Dundalk"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""text"":""28/09/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":2,
+                  ""visible"":false,
+                  ""line1"":{  
+                     ""text"":"" Hodson Bay Hotel, Athlone"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""text"":""29/09/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":3,
+                  ""visible"":true,
+                  ""line1"":{  
+                     ""text"":"" Dunraven Arms Hotel, Adare"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""visible"":true,
+                     ""text"":""01/10/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":4,
+                  ""visible"":true,
+                  ""line1"":{  
+                     ""text"":""Silver Springs Hotel, Cork"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""visible"":true,
+                     ""text"":""06/10/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":5,
+                  ""visible"":true,
+                  ""line1"":{  
+                     ""text"":""Newpark Hotel, Kilkenny"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""visible"":true,
+                     ""text"":""07/10/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":6,
+                  ""visible"":true,
+                  ""line1"":{  
+                     ""text"":""Emmaus Retreat Centre, North Dublin"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""visible"":true,
+                     ""text"":""08/10/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":7,
+                  ""visible"":true,
+                  ""line1"":{  
+                     ""visible"":true,
+                     ""text"":""Stillorgan Park Hotel, South Dublin"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""text"":""12/10/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":8,
+                  ""visible"":true,
+                  ""line1"":{  
+                     ""text"":""Sligo Park Hotel, Sligo"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""text"":""21/10/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               },
+               {  
+                  ""order"":9,
+                  ""visible"":true,
+                  ""line1"":{  
+                     ""text"":""Menlo Park Hotel, Galway"",
+                     ""css"":""offerings_line1""
+                  },
+                  ""line2"":{  
+                     ""text"":""22/10/2015"",
+                     ""css"":""offerings_line2""
+                  }
+               }
+            ]
+         }
+      }"
