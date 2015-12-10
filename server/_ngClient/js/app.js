@@ -54,9 +54,9 @@ var myApp = angular.module('ngclient', ['ngRoute',
       access: {
         requiredLogin: true
       }
-    }).when('/page3', {
-      templateUrl: 'partials/page3.html',
-      controller: 'Page3Ctrl',
+    }).when('/products', {
+      templateUrl: 'partials/products.html',
+      controller: 'ProductsCtrl',
       access: {
         requiredLogin: true
       }

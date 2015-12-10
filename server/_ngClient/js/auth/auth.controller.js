@@ -15,7 +15,7 @@ myApp.controller('LoginCtrl', ['$rootScope','$scope', '$window', '$location', 'U
  
       if (username !== undefined && password !== undefined) {
 				$scope.message = "Calling the server ...";
-        UserAuthFactory.login(username, password).then(function(data) {  // rlacey changed this from success, error to then/catch
+        UserAuthFactory.login(username, password).then(function(data) {  //  changed this from success, error to then/catch
           // the user is legit
 					// moved to UserAuthFactory
 					/*
@@ -29,10 +29,22 @@ myApp.controller('LoginCtrl', ['$rootScope','$scope', '$window', '$location', 'U
           $window.sessionStorage.userRole = data.user.role;     // to fetch the user details on refresh
           $window.sessionStorage.userId = data.user.id;
 					*/
- 
 					
-          $location.path("/");
- 
+					/*
+					do not need to remember routes as not exposed if authentication required
+          $window.sessionStorage.targetRoute = "/products";
+					
+					if ($window.sessionStorage.targetRoute) 
+					{
+						  $location.path($window.sessionStorage.targetRoute);
+							$window.sessionStorage.removeItem("targetRoute");
+					}
+					else
+					{
+							$location.path("/");
+					}
+					*/
+						$location.path("/");
         },
 				function(error)
 				{

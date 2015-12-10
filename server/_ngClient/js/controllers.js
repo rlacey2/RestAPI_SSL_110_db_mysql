@@ -39,8 +39,7 @@ myApp.controller("UserAccountCtrl", ['$scope', 'dataFactoryUsers', 'Authenticati
       dataFactoryUsers.getUsersAccountDetails(userId).then(function(response) {
       $scope.user = response.data;
 						 // change Idle values, could read these from the users settings.
-						 
-			 
+ 
 			 Idle.unwatch();
 			 Idle.setIdle(600) ;
 			 Idle.setTimeout(30);
@@ -71,7 +70,7 @@ myApp.controller("Page2Ctrl", ['$scope',
   }
 ]);
 
-myApp.controller("Page3Ctrl", ['$scope', 'dataFactory',
+myApp.controller("ProductsCtrl", ['$scope', 'dataFactory',
   function($scope, dataFactory) {
     $scope.products = [];
  
