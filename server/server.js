@@ -4,6 +4,9 @@
 // http://www.hacksparrow.com/express-js-https.html
 
 var express = require('express');
+
+var toobusy = require('toobusy-js'); 
+
 var mysql = require('mysql'); 
 var mysqlLib = require('./nodejs/mysqlLib.js');
 
@@ -14,6 +17,8 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var fs = require('fs');  // for certs
+
+
 
 var https = require('https'); 
 
@@ -31,8 +36,24 @@ var app = express();
 
  
  
-//var app = require('express').createServer(options);
-//var app = express.createServer(options);
+// middleware which blocks requests when we're too busy 
+app.use(function(req, res, next) {  // HAS TO BE FIRST 
+  if (toobusy()) {
+     res.status(503).send("<h1>The server is busy, please try later.</h1>");
+  } else {
+    next();
+  }
+});
+ 
+ /*
+ // simulate a load for stress testing
+app.get('/', function(req, res) {
+  // processing the request requires some work! 
+  var i = 0;
+  while (i < 1e8) i++;                // <------ change to increase load time, e8+ overstress 20151209
+  res.send("I counted to " + i);
+});
+*/
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -102,10 +123,16 @@ if (host ===  'localhost') // the webserver
 			console.log(global.dbPool);
 }
 
-
-
-
+ 
 var server = https.createServer(credentials, app);
 var port = 3443;
 console.log("listening on port: " + port);
 server.listen(3443);
+
+
+process.on('SIGINT', function() { // https://www.npmjs.com/package/toobusy-js
+  server.close();
+  // calling .shutdown allows your process to exit normally 
+  toobusy.shutdown();
+  process.exit();
+});

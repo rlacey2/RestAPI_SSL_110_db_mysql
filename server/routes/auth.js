@@ -1,8 +1,13 @@
 var jwt = require('jwt-simple');
+var Q         = require('q');   // promises
+
 var _ = require('lodash');
 
+ var mysql = require('mysql'); 
+ var mysqlLib = require('../nodejs/mysqlLib.js');
 
-var user = require('./users.js'); // temp db of users
+
+var user = require('./users.js');  
 
 var auth = {
         login: function(req, res) {
@@ -19,76 +24,62 @@ console.log("need to store the token in db, if going to invalidate/recall later"
                 });
                 return;
             }
-            // Fire a query to your DB and check if the credentials are valid
-						
-            var dbUserObj = auth.validate(username, password);
-            if (!dbUserObj) { // If authentication fails, we send a 401 back
-                res.status(401);
-                res.json({
-                    "status": 401,
-                    "message": "Invalid credentials"
-                });
-                return;
-            }
-            if (dbUserObj) {
-                // If authentication is success, we will generate a token
-                // and dispatch it to the client
-                res.json(genToken(dbUserObj));
-            }
+            // Fire a deferred query to your DB and check if the credentials are valid
+						var defered = Q.defer();
+
+						defered =  user.validate(username, password)  ;
+
+						defered.promise.then(function(useObject) 
+												 { // then
+			   // If authentication is success, we will generate a token
+         // and dispatch it to the client
+														res.json(genToken(useObject));				
+												 },
+													function(error)  
+												 {
+  	                      // might need a if/else here in case its network related
+											 // If authentication fails, we send a 401 back
+																	res.status(401);
+																	res.json({
+																			"status": 401,
+																			"message": "Invalid credentials"
+																	});
+																	return;		
+												 });								
         },
-        validate: function(username, password) { // check username and password pair
-					console.log("validate() ££££££££££££££££££££££££££");
-					console.log("validate = " + username);
-            // spoofing the DB response for simplicity
-						// console.log("database call required to validate user");
+				validateUser: function(username) {
+					  useObject  =  user.validateUser(username);
 						
-						var users = user.getAll2();
-						var dbUserObjN = _.filterByValues(user.getAll2(), "username",  [username] );		
-						console.log(dbUserObjN[0]);
-						if ( dbUserObjN && dbUserObjN[0] && dbUserObjN[0].enabled) // we have this user
-						{
-										if (password === dbUserObjN[0].password)
-													{
-															// return restricted fields as the user object
-															var dbUserObj = { // spoofing a userobject from the DB. 
-																 // id: users[userIndex].id,
-																	name: dbUserObjN[0].name,
-																	role: dbUserObjN[0].role,
-																	id: dbUserObjN[0].id,   // used for quick db select
-																	username: username,
-															};
-															console.log(dbUserObj);
-															return dbUserObj;
-													}
-													else
-													{
-														return null;
-													}						
-						}
-						else
-							return null;
-	 
-        },
+						console.log(useObject);
+						return useObject;
+					 
+				},
 				
-        validateUser: function(username) { // check if a username exists and return the user object
-						
-            // spoofing the DB response for simplicity
-            var dbUserObj = { // spoofing a userobject from the DB. 
-                name: 'rlacey2',
-                role: 'user',   // change this role to test admin api i.e. invalidate
-                username: 'rlacey2@example.com'
-            };
-					console.log("validateUser() spoof db search, assuming username is unique for search");
-					console.log("username = " + username);
-				//	console.log("user.getAll2() = " );
-				//	console.log( user.getAll2());		
-					
-					// array returned here
-				 	var dbUserObj = _.filterByValues(user.getAll2(), "username",  [username] );				
-						
-						console.log("dbUserObj = "  );
-						console.log(  dbUserObj[0]);
-            return dbUserObj[0];
+ 							
+				// not used yet, calling code would need to be coded to handle promise, and so would this code
+        validateUserAsych: function(username) { // check if a username exists and return the user object
+		     // can/should only be called with a username, so not check to see if empty need
+						var defered = Q.defer();
+
+						defered =  user.validateUser(username)  ;
+
+						defered.promise.then(function(useObject) 
+												 { // then
+			   // If authentication is success, we will generate a token
+         // and dispatch it to the client
+								 res.json(genToken(useObject));				
+												 },
+													function(error)  
+												 {
+  	                      // might need a if/else here in case its network related
+											 // If authentication fails, we send a 401 back
+																	res.status(401);
+																	res.json({
+																			"status": 401,
+																			"message": "Invalid credentials"
+																	});
+																	return;		
+												 });							 
         },
     }
     // private methods

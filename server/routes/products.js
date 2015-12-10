@@ -1,9 +1,21 @@
+ var Q         = require('q');   // promises
+ var mysql = require('mysql'); 
+ var mysqlLib = require('../nodejs/mysqlLib.js');
+
+
 var products = {
-    getAll: function(req, res) {
-			console.log("products.getAll()")
-        var allProducts = data; // Spoof a DB call
-        res.json(allProducts);
-    },
+	
+    getAll: function(req, res) { // nb all fields returned
+			
+							var filter = null;
+							var sql = "SELECT  id,  name     FROM products  ";
+							mysqlLib.executeSQL(sql,  function ( error, results  )  {
+							if (error) return res.json(error);
+									res.json(  results  );
+						} );
+						},
+						
+						
     getOne: function(req, res) {
         var id = req.params.id;
         var product = data[0]; // Spoof a DB call

@@ -1,68 +1,10 @@
-// http://docs.sequelizejs.com/en/latest/docs/scopes/
+ // http://docs.sequelizejs.com/en/latest/docs/scopes/
  var _ = require('lodash');
- 
+ var Q         = require('q');   // promises
  var mysql = require('mysql'); 
  var mysqlLib = require('../nodejs/mysqlLib.js');
  
- 
- function applySQLFilters(sql,   filters)
- {
-	  
-	 	if (filters) // build up the where clause
-				{
-					var filterStr = "";
-					for( var i=0, l=filters.length; i<l; i++ ) {
-							console.log( filters[i] );
-							 for (var p in filters[i] ) {
-											console.log(p + ': ' + filters[i][p]);
-											if (filterStr.length > 0 ) filterStr = filterStr + " and ";
-											filterStr = filterStr  + " " + p + " = " +  filters[i][p];
-									}
-					}
-					sql = sql + " where " + filterStr;
-					console.log(filterStr);
-				}
-		return sql;		
- }
- 
- 
- 
- function executeSQL(  sql,   cback  ) { // cback is the error / success for the mysql, error is first parameter
- /*
-	var filterStr = "";
-	var filters = ifilters || null;
-	// var filters =  [{"field" : "headerId", "value" : 1}, {"field" : "detailId", "value" : 1}]
-  // var filters =  [{ "id"   : 3}, { "name" : "'rlacey3'"}]  notice inner quotes on strings
-	
-	
-	if (filters) // build up the where clause
-	{
-		for( var i=0, l=filters.length; i<l; i++ ) {
-				console.log( filters[i] );
-				 for (var p in filters[i] ) {
-								console.log(p + ': ' + filters[i][p]);
-								if (filterStr.length > 0 ) filterStr = filterStr + " and ";
-								filterStr = filterStr  + " " + p + " = " +  filters[i][p];
-						}
-		}
-		sql = sql + " where " + filterStr;
-		console.log(filterStr);
-	}
-	*/
-	
-		console.log(sql);
-  global.dbPool.query(sql, function (err, result) { // order here is err, result
-    if (err) return cback(null, err);
-    cback(result , null );
-  });
-}
- 
- 
- 
- 
- 
- 
- 
+ //    THINK ASYNCH 
 
 var users = {
 	
@@ -96,11 +38,11 @@ var users = {
 				var filter = [{ "id"   : id} ];
 				var sql2 = "SELECT  id,  username,  role  FROM users  ";
 				
-				var sql = applySQLFilters(sql2,filter);
+				var sql = mysqlLib.applySQLFilters(sql2,filter);
 				
-				executeSQL(sql,  function ( error, posts  )  {
+				mysqlLib.executeSQL(sql,  function ( error, results  )  {
 							if (error) return res.json(error);
-									res.json(  posts  );
+									res.json(  results  );
 						}   );
 			}
 			else
@@ -121,9 +63,9 @@ var users = {
 			
 							var filter = null;
 							var sql = "SELECT  id,  username,  role, enabled  FROM users  ";
-							executeSQL(sql,  function ( error, posts  )  {
+							mysqlLib.executeSQL(sql,  function ( error, results  )  {
 							if (error) return res.json(error);
-									res.json(  posts  );
+									res.json(  results  );
 						} );
     },
 		
@@ -134,11 +76,11 @@ var users = {
 				var filter = [{ "id"   : id} ];
 				var sql2 = "SELECT  id,  username,  role, enabled  FROM users  ";
 				
-				var sql = applySQLFilters(sql2,filter);
+				var sql = mysqlLib.applySQLFilters(sql2,filter);
 				
-				executeSQL(sql,  function ( error, posts  )  {
+				mysqlLib.executeSQL(sql,  function ( error, results  )  {
 							if (error) return res.json(error);
-									res.json(  posts  );
+									res.json(  results  );
 						}   );				
  		
     },
@@ -165,9 +107,9 @@ var users = {
 				sql = sql  + " -1, ";   // enabled
 				sql = sql  + " -1   )";   // timeout
 				
-				executeSQL(sql,  function ( error, posts  )  {
+				mysqlLib.executeSQL(sql,  function ( error, results  )  {
 							if (error) return res.json(error);
-									res.json(  posts  );
+									res.json(  results  );
 				} );
 				
 				 
@@ -191,11 +133,11 @@ var users = {
 				var filter = [{ "id"   : id} ];
 				var sql2 = "delete FROM users  ";
 				
-				var sql = applySQLFilters(sql2,filter);
+				var sql = mysqlLib.applySQLFilters(sql2,filter);
 				
-				executeSQL(sql,  function ( error, posts  )  {
+				mysqlLib.executeSQL(sql,  function ( error, results  )  {
 							if (error) return res.json(error);
-									res.json(  posts  );
+									res.json(  results  );
 						}   );					
 				
 				
@@ -215,61 +157,110 @@ var users = {
     },	
 		
 		
+		
+				//[{ "id"   : 3}, { "name" : "'rlacey3'"}] 
+    validate: function(username, password) {  //2 parameters
+			
+				var params  = [{ "username": username}, { "password": password}, { "enabled": -1}];  // notice this is an array of hashes			
+				var sql = "SELECT  id, name, username,  role, enabled, timeout  FROM users  where ? and ? and ?";			
+				var defered = Q.defer();  // outer promise returned to caller
+				var defered2 = Q.defer(); // inner promise to get get result from deeper call
+		 
+				defered2 = mysqlLib.executeSQLAsynch(sql,params);
+				
+			  defered2.promise.then(function(results) { // business decision below, to filter data callee is getting
+             // a success here could mean a zero result on the dataset
+
+             if (results.length > 0 )
+						 {
+							var userObj = {
+											"name": results[0].name,
+											"username": results[0].username,
+											"role" : results[0].role,
+											"id": results[0].id,
+											"enabled": results[0].enabled,
+											"timeout" : results[0].timeout 
+									};
+						//	return userObj;
+						 	defered.resolve(userObj);
+						}
+						else
+						{
+							defered.reject("rejected credentials");
+						}
+					},
+					function(error) {
+console.log("bbbbbbb");
+									defered.reject(error);
+					});
+ 
+				 return defered;    // let the caller wait asych for the resolving of the promise
+ 		
+    }, //validate
+		
+		
+		  // not used and any callers would need to handle promises
+			validateUserAsynch: function(username ) {  // 1 parameter, used in route checking from the token for authorisation
+			
+		
+				var params  = [{ "username": username}, { "enabled": -1}  ];  // notice this is an array of hashes			
+				var sql = "SELECT  id, name, username,  role, enabled, timeout  FROM users  where ? and ?";			
+				var defered  = Q.defer();  // outer promise returned to caller
+				var defered2 = Q.defer(); // inner promise to get get result from deeper call
+		 
+				defered2 = mysqlLib.executeSQLAsynch(sql,params);
+				
+			  defered2.promise.then(function(results) { // business decision below, to filter data callee is getting
+ 
+	            if (results.length > 0 )
+						 {
+											var userObj = {
+						 
+																	"username": results[0].username,
+																	"role" : results[0].role,
+						 
+															};
+													defered.resolve(userObj);
+												}
+						else
+						{
+							defered.reject("rejected credentials");
+						}						
+							
+					},
+					function(error) {
+ 
+									defered.reject(error);
+					});
+ 
+				 return defered;    // let the caller wait asych for the resolving of the promise
+ 		
+    }, //validateUserAsynch
+		
+		  // blocking call
+	    validateUser: function(username ) {  // 1 parameter, used in route checking from the token for authorisation
+			
+			
+				var params  = [{ "username": username}, { "enabled": -1}  ];  // notice this is an array of hashes			
+				var sql = "SELECT  id, name, username,  role, enabled, timeout  FROM users  where ? and ?";			
+				
+				var callback =  function ( error, results  )  {
+													if (error) return null;
+													// success
+													console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+													var userObj = {															 
+																	"username": results[0].username,
+																	"role" : results[0].role,
+															};
+															
+															console.log(userObj);
+					                return userObj;
+												};
+				
+				
+				mysqlLib.executeSQLParameters(sql,params, callback);
+ 		 
+    } //validateUser	
 };
-var data = [  
-{
-    "name": "rlacey1",
-		"username": "rlacey1@example.com",
-		"password" : "pass1",  // hash and salt
-		"salt" : "sfsdfsjfdfdffhketcwetc",
-		"token" : "",
-		"role" : "user",
-    "id": "1",
-		"revokeToken" : false,
-		"enabled": true,
-		"timeout" : -1,
-},  
-{
-    "name": "rlacey2",
-		"username": "rlacey2@example.com",
-		"password" : "pass2",  // hash and salt
-		"salt" : "sfsdfsjfhketcwetc",
-		"token" : "",
-		"role" : "admin",
-    "id": "2",
-		"revokeToken" : false,
-		"enabled": true,
-		"timeout" : -1,
-}
-,  
-{
-    "name": "rlacey3",
-		"username": "rlacey3@example.com",
-		"password" : "pass3",  // hash and salt
-		"salt" : "sfsdfsjfhketcwetc",
-		"token" : "",
-		"role" : "user",
-    "id": "3",
-		"revokeToken" : true,
-		"enabled": false,
-		"timeout" : -1,
-},
-
-{
-    "name": "rlacey4",
-		"username": "rlacey4@example.com",
-		"password" : "pass4",  // hash and salt
-		"salt" : "sfsdfsjfhketcwetc",
-		"token" : "",
-		"role" : "user",
-    "id": "4",
-		"revokeToken" : true,
-		"enabled": true,
-		"timeout" : -1,
-}
-
-
-
-
-];
+ 
 module.exports = users;
